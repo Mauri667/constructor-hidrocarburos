@@ -21,15 +21,42 @@ function agregarCarbono() {
 
 function actualizarNombre() {
   let n = carbonos.length;
-  let nombre = "---";
-  if (n === 1) nombre = "Metano";
-  else if (n === 2) nombre = "Etano";
-  else if (n === 3) nombre = "Propano";
-  else if (n === 4) nombre = "Butano";
-  else if (n === 5) nombre = "Pentano";
-  else if (n === 6) nombre = "Hexano";
-  document.getElementById("nombre").innerText = nombre;
+  if (n === 0) {
+    document.getElementById("nombre").innerText = "---";
+    return;
+  }
+
+  // Calcular hidrógenos
+  let totalH = calcularHidrogenos();
+
+  // Fórmula molecular
+  let formula = `C${n}H${totalH}`;
+
+  // Prefijos IUPAC básicos
+  const prefijos = ["", "Met", "Et", "Prop", "But", "Pent", "Hex", "Hept", "Oct", "Non", "Dec"];
+  let nombre = prefijos[n] || `C${n}`;
+
+  // Detectar tipo de enlace y posición
+  let tieneDoble = enlaces.find(e => e.tipo === "doble");
+  let tieneTriple = enlaces.find(e => e.tipo === "triple");
+
+  if (tieneTriple) {
+    // posición mínima del enlace triple
+    let pos = Math.min(tieneTriple.c1+1, tieneTriple.c2+1);
+    nombre += `-${pos}-ino`;
+  } else if (tieneDoble) {
+    // posición mínima del enlace doble
+    let pos = Math.min(tieneDoble.c1+1, tieneDoble.c2+1);
+    nombre += `-${pos}-eno`;
+  } else {
+    nombre += "ano";
+  }
+
+  // Mostrar resultado
+  document.getElementById("nombre").innerText =
+    `${nombre} | Fórmula: ${formula} | Enlaces C–C: ${enlaces.length}`;
 }
+
 
 // Funciones de ejemplo para enlaces y ramificaciones
 function agregarDobleEnlace() {
