@@ -3,20 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <title>Constructor de Hidrocarburos</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    #canvas {
+      position: relative;
+      width: 600px;
+      height: 400px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
+    .carbono {
+      width: 40px;
+      height: 40px;
+      background: #f2f2f2;
+      border: 1px solid #000;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 40px;
+      font-weight: bold;
+      position: absolute;
+      cursor: move;
+    }
+    #nombre {
+      margin: 10px 0;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    #botones-ramificacion button {
+      margin: 3px;
+    }
+  </style>
 </head>
 <body>
-  <div id="canvas"></div>
-  <div id="panel">
-    <h3>Nombre IUPAC:</h3>
-    <p id="nombre">---</p>
-    <button onclick="agregarCarbono()">Agregar C</button>
-    <button onclick="agregarDobleEnlace()">Agregar doble enlace</button>
-    <button onclick="agregarTripleEnlace()">Agregar triple enlace</button>
-    <button onclick="agregarRamificacion('metil')">Ramificación Metil</button>
-    <button onclick="agregarRamificacion('etil')">Ramificación Etil</button>
-    <button onclick="reiniciar()">Reiniciar fórmula</button>
-  </div>
+  <h1>Constructor de Hidrocarburos</h1>
+
+  <!-- Área de dibujo -->
+  <canvas id="canvas" width="600" height="400"></canvas>
+
+  <!-- Panel lateral -->
+  <div id="nombre">---</div>
+
+  <!-- Botones principales -->
+  <button onclick="agregarCarbono()">Agregar carbono</button>
+  <button onclick="reiniciar()">Reiniciar fórmula</button>
+
+  <!-- Botones dinámicos de ramificación -->
+  <div id="botones-ramificacion"></div>
+
+  <!-- Script -->
   <script src="script.js"></script>
 </body>
 </html>
+
