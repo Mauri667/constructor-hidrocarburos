@@ -7,26 +7,25 @@ const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 function agregarCarbono() {
-  const div = document.createElement("div");
-  div.className = "carbono";
-  div.innerText = "C";
-  div.style.left = (50 + contador*60) + "px";
-  div.style.top = "100px";
-  div.style.position = "absolute";
-  div.dataset.id = contador;
-  div.dataset.enlaces = 0;
+  if (carbonos.length >= 10) {
+    alert("Ya alcanzaste el máximo de 10 carbonos.");
+    return;
+  }
 
-  canvas.appendChild(div);
-  carbonos.push(div);
+  // Guardamos coordenadas del nuevo carbono
+  let x = 100 + contador * 60;
+  let y = 200;
+  carbonos.push({x, y, enlaces: 0});
   contador++;
   actualizarNombre();
   actualizarBotonesRamificacion();
+  dibujarEnlaces();
 }
 
 function crearEnlace(c1, c2, tipo="simple") {
   enlaces.push({c1, c2, tipo});
-  carbonos[c1].dataset.enlaces++;
-  carbonos[c2].dataset.enlaces++;
+  carbonos[c1].enlaces++;
+  carbonos[c2].enlaces++;
   actualizarNombre();
   dibujarEnlaces();
 }
@@ -40,8 +39,7 @@ function agregarRamificacion(tipo, carbonoBase) {
 function calcularHidrogenos() {
   let totalH = 0;
   carbonos.forEach(c => {
-    let enlacesC = parseInt(c.dataset.enlaces);
-    let hidrogenos = 4 - enlacesC;
+    let hidrogenos = 4 - c.enlaces;
     totalH += hidrogenos;
   });
 
@@ -61,30 +59,40 @@ function dibujarEnlaces() {
   enlaces.forEach(e => {
     const c1 = carbonos[e.c1];
     const c2 = carbonos[e.c2];
-    const x1 = parseInt(c1.style.left) + 25;
-    const y1 = parseInt(c1.style.top) + 25;
-    const x2 = parseInt(c2.style.left) + 25;
-    const y2 = parseInt(c2.style.top) + 25;
-
     ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
+    ctx.moveTo(c1.x, c1.y);
+    ctx.lineTo(c2.x, c2.y);
     ctx.strokeStyle = "black";
     ctx.lineWidth = (e.tipo === "simple" ? 2 : e.tipo === "doble" ? 4 : 6);
     ctx.stroke();
   });
 
+  // Dibujar carbonos como círculos azules
+  carbonos.forEach((c, i) => {
+    ctx.beginPath();
+    ctx.arc(c.x, c.y, 20, 0, 2 * Math.PI);
+    ctx.fillStyle = "#3498db";
+    ctx.fill();
+    ctx.strokeStyle = "#2c3e50";
+    ctx.stroke();
+    ctx.fillStyle = "#fff";
+    ctx.font = "bold 16px Segoe UI";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("C" + (i+1), c.x, c.y);
+  });
+
   // Dibujar ramificaciones
   ramificaciones.forEach(r => {
     const base = carbonos[r.carbonoBase];
-    const x = parseInt(base.style.left) + 25;
-    const y = parseInt(base.style.top) + 25;
     ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x + 50, y - 30);
+    ctx.moveTo(base.x, base.y);
+    ctx.lineTo(base.x + 50, base.y - 30);
     ctx.strokeStyle = "green";
     ctx.stroke();
-    ctx.fillText(r.tipo === "metil" ? "CH3" : "CH2-CH3", x + 55, y - 30);
+    ctx.fillStyle = "green";
+    ctx.font = "bold 14px Segoe UI";
+    ctx.fillText(r.tipo === "metil" ? "CH3" : "CH2-CH3", base.x + 55, base.y - 30);
   });
 }
 
@@ -92,13 +100,17 @@ function actualizarNombre() {
   let n = carbonos.length;
   if (n === 0) {
     document.getElementById("nombre").innerText = "---";
+    document.getElementById("contador").innerText = "Carbonos: 0 | Hidrógenos: 0";
     return;
   }
 
   let totalH = calcularHidrogenos();
   let formula = `C${n + ramificaciones.length}H${totalH}`;
 
-  const prefijos = ["", "Met", "Et", "Prop", "But", "Pent", "Hex", "Hept", "Oct", "Non", "Dec"];
+  const prefijos = [
+    "", "Met", "Et", "Prop", "But", "Pent",
+    "Hex", "Hept", "Oct", "Non", "Dec"
+  ];
   let nombre = prefijos[n] || `C${n}`;
 
   let tieneDoble = enlaces.find(e => e.tipo === "doble");
@@ -122,6 +134,9 @@ function actualizarNombre() {
 
   document.getElementById("nombre").innerText =
     `${nombre} | Fórmula: ${formula}`;
+
+  document.getElementById("contador").innerText =
+    `Carbonos: ${n + ramificaciones.length} | Hidrógenos: ${totalH}`;
 }
 
 function actualizarBotonesRamificacion() {
@@ -148,7 +163,7 @@ function reiniciar() {
   ramificaciones = [];
   contador = 0;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  document.getElementById("canvas").innerHTML = "";
   document.getElementById("nombre").innerText = "---";
+  document.getElementById("contador").innerText = "Carbonos: 0 | Hidrógenos: 0";
   document.getElementById("botones-ramificacion").innerHTML = "";
 }
