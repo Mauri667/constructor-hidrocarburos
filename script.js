@@ -41,3 +41,20 @@ function agregarTripleEnlace() {
 function agregarRamificacion(tipo) {
   document.getElementById("nombre").innerText += ` con ramificación ${tipo}`;
 }
+function reiniciar() {
+  // Vaciar arrays
+  carbonos = [];
+  enlaces = [];
+  contador = 0;
+
+  // Limpiar el canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Borrar todos los divs de carbonos
+  const canvasDiv = document.getElementById("canvas");
+  canvasDiv.innerHTML = "";
+
+  // Resetear el panel lateral
+  document.getElementById("nombre").innerText = "---";
+}
+
