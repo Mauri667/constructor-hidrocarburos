@@ -31,6 +31,10 @@ function crearEnlace(c1, c2, tipo="simple") {
 }
 
 function agregarRamificacion(tipo, carbonoBase) {
+  // Eliminar ramificación previa en ese carbono si existe
+  ramificaciones = ramificaciones.filter(r => r.carbonoBase !== carbonoBase);
+
+  // Agregar la nueva ramificación
   ramificaciones.push({tipo, carbonoBase});
   actualizarNombre();
   dibujarEnlaces();
@@ -167,3 +171,4 @@ function reiniciar() {
   document.getElementById("contador").innerText = "Carbonos: 0 | Hidrógenos: 0";
   document.getElementById("botones-ramificacion").innerHTML = "";
 }
+
