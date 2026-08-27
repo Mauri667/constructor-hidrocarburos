@@ -148,16 +148,24 @@ function actualizarBotonesRamificacion() {
   contenedor.innerHTML = ""; // limpiar botones anteriores
 
   carbonos.forEach((c, i) => {
-    const botonMetil = document.createElement("button");
-    botonMetil.innerText = `Agregar metil en C${i+1}`;
-    botonMetil.onclick = () => agregarRamificacion("metil", i);
+    let esPrimero = (i === 0);
+    let esUltimo = (i === carbonos.length - 1);
 
-    const botonEtil = document.createElement("button");
-    botonEtil.innerText = `Agregar etil en C${i+1}`;
-    botonEtil.onclick = () => agregarRamificacion("etil", i);
+    // Botón Metil: no en C1 ni último
+    if (!esPrimero && !esUltimo) {
+      const botonMetil = document.createElement("button");
+      botonMetil.innerText = `Agregar metil en C${i+1}`;
+      botonMetil.onclick = () => agregarRamificacion("metil", i);
+      contenedor.appendChild(botonMetil);
+    }
 
-    contenedor.appendChild(botonMetil);
-    contenedor.appendChild(botonEtil);
+    // Botón Etil: no en C1, C2 ni últimos
+    if (i > 1 && i < carbonos.length - 1) {
+      const botonEtil = document.createElement("button");
+      botonEtil.innerText = `Agregar etil en C${i+1}`;
+      botonEtil.onclick = () => agregarRamificacion("etil", i);
+      contenedor.appendChild(botonEtil);
+    }
   });
 }
 
@@ -171,4 +179,3 @@ function reiniciar() {
   document.getElementById("contador").innerText = "Carbonos: 0 | Hidrógenos: 0";
   document.getElementById("botones-ramificacion").innerHTML = "";
 }
-
